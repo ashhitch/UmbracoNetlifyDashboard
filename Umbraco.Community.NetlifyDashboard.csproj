@@ -11,7 +11,7 @@
     <Product>Umbraco Netlify Dashboard</Product>
     <Title>Netlify Dashboard for Umbraco</Title>
     <Description>A backoffice dashboard for Netlify: connect with a personal access token, view your last deploys and their status, and purge the Netlify CDN cache (full or by cache tag).</Description>
-    <Authors>Ashley Hitchcock</Authors>
+    <Authors>Ash Hitchcock</Authors>
     <PackageTags>umbraco;umbraco-marketplace;netlify;dashboard;deploy;cache</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
