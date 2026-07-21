@@ -1,0 +1,62 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <StaticWebAssetBasePath>/</StaticWebAssetBasePath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Umbraco.Community.NetlifyDashboard</PackageId>
+    <Product>Umbraco Netlify Dashboard</Product>
+    <Title>Netlify Dashboard for Umbraco</Title>
+    <Description>A backoffice dashboard for Netlify: connect with a personal access token, view your last deploys and their status, and purge the Netlify CDN cache (full or by cache tag).</Description>
+    <Authors>Ashley Hitchcock</Authors>
+    <PackageTags>umbraco;umbraco-marketplace;netlify;dashboard;deploy;cache</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="17.0.1" />
+    <PackageReference Include="Umbraco.Cms.Web.Common" Version="17.0.1" />
+    <PackageReference Include="Umbraco.Cms.Api.Common" Version="17.0.1" />
+    <PackageReference Include="Umbraco.Cms.Api.Management" Version="17.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="" />
+
+    <!-- The Client folder holds the TypeScript source; it is built to wwwroot/App_Plugins and is not packed directly. -->
+    <ClientAssetsInputs Include="Client\**" Exclude="$(DefaultItemExcludes)" />
+    <Content Remove="Client\**" />
+
+    <!-- Keep the manifest visible in the solution but don't pack it from the source location. -->
+    <None Include="Client\public\umbraco-package.json" Pack="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <!--
+    Automated client build. Set -p:BuildClientAssets=true (recommended for `dotnet pack`) to have
+    MSBuild run the npm build and emit the App_Plugins assets. It is off by default so the C# can be
+    built without Node, and so local dev can rely on `npm run watch` instead.
+  -->
+  <Target Name="RestoreClient" Condition="'$(BuildClientAssets)' == 'true'" Inputs="Client\package.json;Client\package-lock.json" Outputs="Client\node_modules\.package-lock.json">
+    <Message Importance="high" Text="Restoring Client NPM packages..." />
+    <Exec Command="npm install" WorkingDirectory="Client" />
+  </Target>
+
+  <Target Name="BuildClient" Condition="'$(BuildClientAssets)' == 'true'" BeforeTargets="AssignTargetPaths" DependsOnTargets="RestoreClient" Inputs="@(ClientAssetsInputs)" Outputs="$(IntermediateOutputPath)client.complete.txt">
+    <Message Importance="high" Text="Executing Client NPM build script..." />
+    <Exec Command="npm run build" WorkingDirectory="Client" />
+    <ItemGroup>
+      <_ClientAssetsBuildOutput Include="wwwroot\App_Plugins\**" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(IntermediateOutputPath)client.complete.txt" Lines="@(_ClientAssetsBuildOutput)" Overwrite="true" />
+  </Target>
+
+</Project>

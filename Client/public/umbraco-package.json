@@ -1,0 +1,15 @@
+{
+  "$schema": "../../../../umbraco-package-schema.json",
+  "id": "Umbraco.Community.NetlifyDashboard",
+  "name": "Netlify Dashboard",
+  "version": "1.0.0",
+  "allowTelemetry": true,
+  "extensions": [
+    {
+      "name": "Netlify Dashboard Bundle",
+      "alias": "Umbraco.Community.NetlifyDashboard.Bundle",
+      "type": "bundle",
+      "js": "/App_Plugins/NetlifyDashboard/netlify-dashboard.js"
+    }
+  ]
+}
