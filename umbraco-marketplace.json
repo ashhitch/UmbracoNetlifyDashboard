@@ -1,0 +1,15 @@
+{
+  "$schema": "https://marketplace.umbraco.com/umbraco-marketplace-schema.json",
+  "PackageType": "Package",
+  "Category": "Backoffice Extensions",
+  "Tags": [ "Netlify", "Dashboard", "Deploy", "CDN", "Cache" ],
+  "AuthorDetails": {
+    "Name": "Ash Hitchcock",
+    "Url": "https://github.com/ashhitch"
+  },
+  "DocumentationUrl": "https://github.com/ashhitch/UmbracoNetlifyDashboard#readme",
+  "IssueTrackerUrl": "https://github.com/ashhitch/UmbracoNetlifyDashboard/issues",
+  "SourceCodeUrl": "https://github.com/ashhitch/UmbracoNetlifyDashboard",
+  "LicenseTypes": [ "Free", "OpenSource" ],
+  "VersionDependencyMode": "Default"
+}
