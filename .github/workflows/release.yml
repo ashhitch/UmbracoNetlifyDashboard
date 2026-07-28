@@ -50,6 +50,47 @@ jobs:
           -p:Version=${{ steps.version.outputs.value }}
           -o ./artifacts
 
+      - name: Verify backoffice assets are packaged
+        shell: bash
+        run: |
+          package_file=$(find ./artifacts -maxdepth 1 -type f -name 'Umbraco.Community.NetlifyDashboard.*.nupkg' -print -quit)
+
+          if [ -z "$package_file" ]; then
+            echo "No NuGet package was created."
+            exit 1
+          fi
+
+          package_contents=$(unzip -Z1 "$package_file")
+          grep -Fx 'staticwebassets/App_Plugins/NetlifyDashboard/umbraco-package.json' <<< "$package_contents"
+          grep -Fx 'staticwebassets/App_Plugins/NetlifyDashboard/netlify-dashboard.js' <<< "$package_contents"
+
+      - name: Smoke test package in a clean Umbraco site
+        shell: bash
+        run: |
+          smoke_dir="$RUNNER_TEMP/netlify-dashboard-smoke"
+          package_version="${{ steps.version.outputs.value }}"
+
+          dotnet new install Umbraco.Templates::17.4.2
+          dotnet new umbraco \
+            --output "$smoke_dir" \
+            --name NetlifyDashboardSmoke \
+            --release Latest \
+            --package-management PerProject \
+            --development-database-type SQLite \
+            --no-restore
+          dotnet add "$smoke_dir/NetlifyDashboardSmoke.csproj" \
+            package Umbraco.Community.NetlifyDashboard \
+            --version "$package_version" \
+            --no-restore
+          dotnet restore "$smoke_dir/NetlifyDashboardSmoke.csproj" \
+            --source "$GITHUB_WORKSPACE/artifacts" \
+            --source https://api.nuget.org/v3/index.json
+          dotnet build "$smoke_dir/NetlifyDashboardSmoke.csproj" --no-restore
+
+          assets_manifest=$(find "$smoke_dir/obj" -type f -name 'staticwebassets.development.json' -print -quit)
+          test -n "$assets_manifest"
+          grep -F 'App_Plugins/NetlifyDashboard/umbraco-package.json' "$assets_manifest"
+
       - name: NuGet login
         id: nuget-login
         uses: NuGet/login@v1
