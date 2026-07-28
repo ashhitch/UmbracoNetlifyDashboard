@@ -2,7 +2,7 @@
   "$schema": "../../../../umbraco-package-schema.json",
   "id": "Umbraco.Community.NetlifyDashboard",
   "name": "Netlify Dashboard",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "allowTelemetry": true,
   "extensions": [
     {
