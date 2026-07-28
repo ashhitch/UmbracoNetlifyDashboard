@@ -41,6 +41,9 @@
     <ClientAssetsInputs Include="Client\**" Exclude="$(DefaultItemExcludes)" />
     <Content Remove="Client\**" />
 
+    <!-- Client assets do not exist yet in a clean checkout. BuildClient adds them back after Vite emits them. -->
+    <Content Remove="wwwroot\App_Plugins\**" Condition="'$(BuildClientAssets)' == 'true'" />
+
     <!-- Keep the manifest visible in the solution but don't pack it from the source location. -->
     <None Include="Client\public\umbraco-package.json" Pack="false" />
   </ItemGroup>
@@ -64,6 +67,7 @@
     <Exec Command="npm run build" WorkingDirectory="Client" />
     <ItemGroup>
       <_ClientAssetsBuildOutput Include="wwwroot\App_Plugins\**" />
+      <Content Include="wwwroot\App_Plugins\**" />
     </ItemGroup>
     <WriteLinesToFile File="$(IntermediateOutputPath)client.complete.txt" Lines="@(_ClientAssetsBuildOutput)" Overwrite="true" />
   </Target>
